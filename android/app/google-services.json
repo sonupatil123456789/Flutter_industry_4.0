@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "771804462424",
+    "firebase_url": "https://industry4mech-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "industry4mech",
+    "storage_bucket": "industry4mech.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:771804462424:android:26cab1521a5601e68ff92d",
+        "android_client_info": {
+          "package_name": "com.example.industry4_0"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "771804462424-6jsu7hu62v9254ibg4e0slecgiut2jrf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4p_5wBIDgNP-g_JU6IgVidKSr-QFbq9w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "771804462424-6jsu7hu62v9254ibg4e0slecgiut2jrf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
