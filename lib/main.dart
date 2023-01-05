@@ -89,4 +89,4 @@ class _Logoscreen_splashState extends State<Logoscreen_splash> {
 }
 
 
-/////////////// this is a change 
+/////////////// this is a change vjx 2 
