@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:location_tracker/Pages/Homepage.dart';
 import '../Components/Backbtnnavbar.dart';
@@ -39,7 +40,7 @@ class _EmargancydetailformState extends State<Emargancydetailform> {
         body: SafeArea(
             child: Column(
       children: [
-        const Back_btn_navbar(navname: "Fill Details"),
+        Back_btn_navbar(navname: "Fill Details"),
         Expanded(
           child: Container(
               width: screenwidth,
@@ -72,13 +73,17 @@ class _EmargancydetailformState extends State<Emargancydetailform> {
                         width: screenwidth * 0.80,
                         child: Padding(
                           padding: const EdgeInsets.all(9.0),
-                          child: Text(
-                            "Headquarters details",
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 0, 0, 0),
-                                fontSize: screenwidth * 0.055,
-                                fontWeight: FontWeight.w500),
-                          ),
+                          child: Text("Headquarters details",
+                              // style: TextStyle(
+                              //     color: Color.fromARGB(255, 0, 0, 0),
+                              //     fontSize: screenwidth * 0.055,
+                              //     fontWeight: FontWeight.w500),
+
+                              style: GoogleFonts.notoSans(
+                                  height: 1.2,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: screenwidth * 0.050,
+                                  color: HexColor('#212121'))),
                         ),
                       ),
                       buildTextField("Head name", 'Name of Head', false,
@@ -99,13 +104,13 @@ class _EmargancydetailformState extends State<Emargancydetailform> {
                         width: screenwidth * 0.80,
                         child: Padding(
                           padding: const EdgeInsets.all(9.0),
-                          child: Text(
-                            "Ambulance details",
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 0, 0, 0),
-                                fontSize: screenwidth * 0.055,
-                                fontWeight: FontWeight.w500),
-                          ),
+                          child: Text("Ambulance details",
+                              style: GoogleFonts.notoSans(
+                                  height: 1.2,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: screenwidth * 0.050,
+                                  color: HexColor('#212121'))
+                                  ),
                         ),
                       ),
                       buildTextField(

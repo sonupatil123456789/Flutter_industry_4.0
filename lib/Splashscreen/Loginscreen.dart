@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -10,11 +11,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:location_tracker/Splashscreen/Resetemailscreen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location_tracker/Pages/Homepage.dart';
-import 'package:location_tracker/Splashscreen/Forgotpassword.dart';
 import 'package:location_tracker/Splashscreen/Signeuppage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -48,7 +49,7 @@ class _LoginpageState extends State<Loginpage> {
     print("func is clicked , $password  , $email");
     try {
       final response = await http.post(
-          Uri.parse('http://$baseurl/api/v1/auth/login'),
+          Uri.parse('https://$baseurl/api/v1/auth/login'),
           headers: <String, String>{
             'Content-Type': 'application/json ',
           },
@@ -78,7 +79,7 @@ class _LoginpageState extends State<Loginpage> {
             mapresponse["contracter"]["contactNumber"].toString());
 
         await Fluttertoast.showToast(
-            msg: "contracter login successfully",
+            msg: mapresponse["message"],
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 5,
@@ -226,11 +227,10 @@ class _LoginpageState extends State<Loginpage> {
                         padding:
                             EdgeInsets.fromLTRB(screenwidth * 0.44, 0, 0, 0),
                         child: GestureDetector(
-                          onTap: () async {
-                            // Obtain shared prefere
+                          onTap: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
-                              return Forgotpassword();
+                              return Resetemailscreen();
                             }));
                           },
                           child: Text(
@@ -282,7 +282,8 @@ class _LoginpageState extends State<Loginpage> {
                               "Log in",
                               style: GoogleFonts.notoSans(
                                   fontSize: screenwidth * 0.046,
-                                  fontWeight: FontWeight.w700),
+                                  fontWeight: FontWeight.w700)
+                                  ,
                             ),
                           )),
                       SizedBox(

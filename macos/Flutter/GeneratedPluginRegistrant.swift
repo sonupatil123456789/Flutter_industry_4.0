@@ -11,8 +11,8 @@ import firebase_messaging
 import firebase_storage
 import geolocator_apple
 import location
-import path_provider_macos
-import shared_preferences_macos
+import path_provider_foundation
+import shared_preferences_foundation
 import url_launcher_macos
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {

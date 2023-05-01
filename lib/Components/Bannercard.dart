@@ -1,8 +1,13 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:location_tracker/Components/Allworkerlist.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -16,6 +21,61 @@ class Banner_cards extends StatefulWidget {
 }
 
 class _Banner_cardsState extends State<Banner_cards> {
+  var stringresponse;
+  dynamic mapresponse;
+  dynamic mapresponsedata;
+
+  String baseurl = dotenv.env['BASEURL']!;
+
+  @override
+  initState() {
+    Getallworkersdetails();
+    super.initState;
+  }
+
+  Future Getallworkersdetails() async {
+    var companyid;
+    final prefs = await SharedPreferences.getInstance();
+    companyid = prefs.getString('companyid');
+    try {
+      final response = await http.get(Uri.parse(
+          'https://$baseurl/api/v1/contracteraccountworkers/$companyid'));
+      if (response.statusCode == 200) {
+        setState(() {
+          stringresponse = response.body;
+          mapresponse = jsonDecode(stringresponse);
+          mapresponsedata = mapresponse["workercount"];
+          print("=============$mapresponsedata");
+        });
+      }
+      if (response.statusCode == 400) {
+        setState(() {
+          stringresponse = response.body;
+          mapresponse = jsonDecode(stringresponse);
+          mapresponsedata = mapresponse["message"];
+        });
+        Fluttertoast.showToast(
+            msg: "${mapresponse["message"]}",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 5,
+            backgroundColor: HexColor('#A5FF8F'),
+            textColor: HexColor('#000000'),
+            fontSize: 16.0);
+      }
+    } catch (e) {
+      print('$e');
+      Fluttertoast.showToast(
+          msg: "${e}",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 5,
+          backgroundColor: HexColor('#A5FF8F'),
+          textColor: HexColor('#000000'),
+          fontSize: 16.0);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenwidth = MediaQuery.of(context).size.width;
@@ -46,7 +106,15 @@ class _Banner_cardsState extends State<Banner_cards> {
                   radius: 60.0,
                   lineWidth: 12.0,
                   percent: 0.60,
-                  center: new Text("60%"),
+                  center: new Text(
+                    mapresponsedata == null
+                        ? "0"
+                        : mapresponse["workercount"].toString(),
+                    style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20,
+                        color: HexColor('#212121')),
+                  ),
                   progressColor: HexColor("#6C63FF"),
                 ),
               )
@@ -72,28 +140,16 @@ class _Banner_cardsState extends State<Banner_cards> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "`Track worker",
-                            style: TextStyle(
-                              // color: HexColor(""),
-                              fontWeight: FontWeight.w800,
-                              fontSize: 25,
-                              // fontSize: screenwidth <= 400
-                              //     ? screenwidth * 0.00
-                              //     : screenwidth * 0.064,
-                            ),
-                          ),
-                          Text(
-                            " location",
-                            style: TextStyle(
-                              // color: HexColor(""),
-                              fontWeight: FontWeight.w800,
-                              fontSize: 25,
-                              // fontSize: screenwidth <= 400
-                              //     ? screenwidth * 0.00
-                              //     : screenwidth * 0.064,
-                            ),
-                          ),
+                          Text("`Track worker",
+                              style: GoogleFonts.poppins(
+                                  color: HexColor('#212121'),
+                                  fontSize: screenwidth * 0.054,
+                                  fontWeight: FontWeight.bold)),
+                          Text(" location",
+                              style: GoogleFonts.poppins(
+                                  color: HexColor('#212121'),
+                                  fontSize: screenwidth * 0.054,
+                                  fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
@@ -123,9 +179,9 @@ class _Banner_cardsState extends State<Banner_cards> {
                         },
                         child: Text(
                           'View More',
-                          style: TextStyle(
-                              // fontSize: 17,
-                              fontSize: screenwidth * 0.040,
+                          style: GoogleFonts.notoSans(
+                              color: HexColor('#FFFFFF'),
+                              fontSize: screenwidth * 0.032,
                               fontWeight: FontWeight.w400),
                         ),
                       ),

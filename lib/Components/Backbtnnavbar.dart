@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:location_tracker/Pages/Homepage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Back_btn_navbar extends StatelessWidget {
   final String navname;
 
-  const Back_btn_navbar({
+  Back_btn_navbar({
     Key? key,
     required this.navname,
   }) : super(key: key);
@@ -40,12 +42,13 @@ class Back_btn_navbar extends StatelessWidget {
           SizedBox(
             width: 15,
           ),
-          Text(navname,
-              style: TextStyle(
-                color: HexColor('#000000'),
-                fontWeight: FontWeight.bold,
-                fontSize: 24.0,
-              )),
+          Text(
+            navname,
+            style: GoogleFonts.notoSans(
+                color: HexColor('#212121'),
+                fontSize: screenwidth * 0.052,
+                fontWeight: FontWeight.w800),
+          ),
         ],
       ),
     );

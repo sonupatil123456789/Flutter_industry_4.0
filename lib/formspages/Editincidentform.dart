@@ -42,6 +42,7 @@ class Editincidentform extends StatefulWidget {
 
 class _EditincidentformState extends State<Editincidentform> {
   var stringresponseupdate;
+  dynamic mapresponse;
   var noofpeopleenjured;
   var noofpeopledead;
   var totalfinancialloss;
@@ -104,7 +105,7 @@ class _EditincidentformState extends State<Editincidentform> {
       pdffilelink, incidenttype, totalinvestment) async {
     try {
       final response = await http.put(
-          Uri.parse('http://$baseurl/api/v1/incident/${widget.objectid}'),
+          Uri.parse('https://$baseurl/api/v1/incident/${widget.objectid}'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
@@ -122,6 +123,16 @@ class _EditincidentformState extends State<Editincidentform> {
       if (response.statusCode == 200) {
         setState(() {
           stringresponseupdate = response.body;
+          mapresponse = jsonDecode(stringresponseupdate);
+          print(mapresponse);
+          Fluttertoast.showToast(
+              msg: "${mapresponse["message"]}",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 5,
+              backgroundColor: HexColor('#A5FF8F'),
+              textColor: HexColor('#000000'),
+              fontSize: 16.0);
         });
       } else {
         return null;
@@ -155,7 +166,7 @@ class _EditincidentformState extends State<Editincidentform> {
         body: SafeArea(
       child: Column(
         children: [
-          const Back_btn_navbar(navname: "Edit information"),
+          Back_btn_navbar(navname: "Edit information"),
           Expanded(
             child: Container(
                 width: screenwidth,

@@ -9,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location_tracker/Pages/Homepage.dart';
@@ -57,6 +58,7 @@ class Updateworkerform extends StatefulWidget {
 
 class _UpdateworkerformState extends State<Updateworkerform> {
   var stringresponseupdate;
+  dynamic mapresponse;
 
   DateTime selectedDate = DateTime.now();
   dynamic radiovalue;
@@ -157,9 +159,24 @@ class _UpdateworkerformState extends State<Updateworkerform> {
       height,
       bloodgroup,
       adharnumber) async {
+    var box = {
+      workername,
+      workeremail,
+      workernumber,
+      images,
+      birthdate,
+      address,
+      age,
+      gender,
+      weight,
+      height,
+      bloodgroup,
+      adharnumber
+    };
+    print(box);
     try {
       final response = await http.put(
-          Uri.parse('http://$baseurl/api/v1/worker/${widget.uuid}'),
+          Uri.parse('https://$baseurl/api/v1/worker/${widget.uuid}'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
@@ -188,12 +205,45 @@ class _UpdateworkerformState extends State<Updateworkerform> {
       if (response.statusCode == 200) {
         setState(() {
           stringresponseupdate = response.body;
+          mapresponse = jsonDecode(stringresponseupdate);
+          print(mapresponse);
+          Fluttertoast.showToast(
+              msg: "${mapresponse["message"]}",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 5,
+              backgroundColor: HexColor('#A5FF8F'),
+              textColor: HexColor('#000000'),
+              fontSize: 16.0);
+        });
+      }
+      if (response.statusCode == 402) {
+        setState(() {
+          stringresponseupdate = response.body;
+          mapresponse = jsonDecode(stringresponseupdate);
+          print(mapresponse);
+          Fluttertoast.showToast(
+              msg: "${mapresponse["message"]}",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 5,
+              backgroundColor: HexColor('#A5FF8F'),
+              textColor: HexColor('#000000'),
+              fontSize: 16.0);
         });
       } else {
         return null;
       }
     } catch (e) {
-      print('$e-------');
+      Fluttertoast.showToast(
+          msg: "${e}",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 5,
+          backgroundColor: HexColor('#A5FF8F'),
+          textColor: HexColor('#000000'),
+          fontSize: 16.0);
+      print('$e');
     }
   }
 
@@ -234,7 +284,7 @@ class _UpdateworkerformState extends State<Updateworkerform> {
         body: SafeArea(
       child: Column(
         children: [
-          const Back_btn_navbar(navname: "Edit information"),
+          Back_btn_navbar(navname: "Edit information"),
           Expanded(
             child: Container(
                 width: screenwidth,
@@ -268,7 +318,7 @@ class _UpdateworkerformState extends State<Updateworkerform> {
                                       child: (imagedownloadedurl != null
                                           ? Image.network(workerprofileimage,
                                               fit: BoxFit.cover)
-                                          : Image.network(workerprofileimage,
+                                          : Image.asset(defaultimage,
                                               fit: BoxFit.cover))),
                                 ),
                               ),
@@ -313,12 +363,12 @@ class _UpdateworkerformState extends State<Updateworkerform> {
                                                 ),
                                                 Text(
                                                   "Male",
-                                                  style: TextStyle(
+                                                  style: GoogleFonts.notoSans(
                                                       color: box2color,
                                                       fontSize:
-                                                          screenwidth * 0.04,
+                                                          screenwidth * 0.03,
                                                       fontWeight:
-                                                          FontWeight.w500),
+                                                          FontWeight.w400),
                                                 ),
                                               ],
                                             ),
@@ -357,12 +407,12 @@ class _UpdateworkerformState extends State<Updateworkerform> {
                                                 ),
                                                 Text(
                                                   "Female",
-                                                  style: TextStyle(
+                                                  style: GoogleFonts.notoSans(
                                                       color: box1color,
                                                       fontSize:
-                                                          screenwidth * 0.04,
+                                                          screenwidth * 0.03,
                                                       fontWeight:
-                                                          FontWeight.w500),
+                                                          FontWeight.w400),
                                                 ),
                                               ],
                                             ),
@@ -390,7 +440,15 @@ class _UpdateworkerformState extends State<Updateworkerform> {
                                         onPressed: () {
                                           _selectDate(context);
                                         },
-                                        child: Text("Birthdate"),
+                                        child: Text("Birthdate",
+                                            style: GoogleFonts.notoSans(
+                                               height: 1.2,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      fontSize:
+                                                          screenwidth * 0.030,
+                                                      color:
+                                                          HexColor('#FFFFFF'))),
                                       ),
                                     ),
                                   ],
@@ -411,13 +469,12 @@ class _UpdateworkerformState extends State<Updateworkerform> {
                           width: screenwidth * 0.80,
                           child: Padding(
                             padding: const EdgeInsets.all(9.0),
-                            child: Text(
-                              "Personal Information",
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 0, 0, 0),
-                                  fontSize: screenwidth * 0.055,
-                                  fontWeight: FontWeight.w500),
-                            ),
+                            child: Text("Personal Information",
+                                style: GoogleFonts.notoSans(
+                                    height: 1.2,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: screenwidth * 0.050,
+                                    color: HexColor('#212121'))),
                           ),
                         ),
                         buildTextField(
@@ -472,13 +529,12 @@ class _UpdateworkerformState extends State<Updateworkerform> {
                           width: screenwidth * 0.80,
                           child: Padding(
                             padding: const EdgeInsets.all(9.0),
-                            child: Text(
-                              "Medical information",
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 0, 0, 0),
-                                  fontSize: screenwidth * 0.055,
-                                  fontWeight: FontWeight.w500),
-                            ),
+                            child: Text("Medical information",
+                                style: GoogleFonts.notoSans(
+                                    height: 1.2,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: screenwidth * 0.050,
+                                    color: HexColor('#212121'))),
                           ),
                         ),
                         buildTextField("Age", '45', false, screenwidth * 0.80,

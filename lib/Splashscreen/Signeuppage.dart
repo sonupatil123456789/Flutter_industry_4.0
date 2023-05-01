@@ -84,7 +84,7 @@ class _SigneuppageState extends State<Signeuppage> {
     print("func is clicked , $password , $name , $phoneno , $email");
     try {
       final response =
-          await http.post(Uri.parse('http://$baseurl/api/v1/auth/signup'),
+          await http.post(Uri.parse('https://$baseurl/api/v1/auth/signup'),
               headers: <String, String>{
                 'Content-Type': 'application/json ',
               },

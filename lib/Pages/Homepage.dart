@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
@@ -8,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_svg/svg.dart';
 // import 'package:location/location.dart';
+import 'package:background_sms/background_sms.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -15,7 +18,7 @@ import 'package:location_tracker/Components/Bannercard.dart';
 import 'package:location_tracker/Components/Bottombar.dart';
 import 'package:location_tracker/Components/Cards.dart';
 import 'package:location_tracker/Components/Navbar.dart';
-// import 'package:telephony/telephony.dart';
+import 'package:telephony/telephony.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
 final String doctor = 'assets/doctor.svg';
@@ -66,23 +69,24 @@ class _HomepageState extends State<Homepage> {
     phonenumberfirebriget = prefs.getString('Firebrigetno');
     phonenumberambulance = prefs.getString('Ambulanceno');
     print(
-        '$from_name-$to_name-$phonenumberfirebriget-$phonenumberambulance-is all the details');
+        '$from_email-$to_email-$phonenumberfirebriget-$phonenumberambulance-is all the details');
   }
 
   sendbackgroundmessage() async {
-    // bool? permissionsGranted = await telephony.requestSmsPermissions;
-    // await telephony.sendSms(
-    //     to: phonenumberfirebriget.toString(),
-    //     message:
-    //         "hi there is incident happened in in our construction site please send  firebriget !");
-    // await telephony.sendSms(
-    //     to: phonenumberambulance.toString(),
-    //     message:
-    //         "hi there is incident happened in in our construction site please send ambulance !");
-    // await telephony.sendSms(
-    //     to: headphonenumber.toString(),
-    //     message:
-    //         "hi there is incident happened in in our construction site please send ambulance !");
+    final Telephony telephony = Telephony.instance;
+    bool? permissionsGranted = await telephony.requestSmsPermissions;
+    await telephony.sendSms(
+        to: phonenumberfirebriget.toString(),
+        message:
+            "hi there is incident happened in in our construction site please send  firebriget !");
+    await telephony.sendSms(
+        to: phonenumberambulance.toString(),
+        message:
+            "hi there is incident happened in in our construction site please send ambulance !");
+    await telephony.sendSms(
+        to: headphonenumber.toString(),
+        message:
+            "hi there is incident happened in in our construction site please contact local contracter for more details  !");
     bool? res = await FlutterPhoneDirectCaller.callNumber(
         phonenumberambulance.toString());
   }
@@ -133,7 +137,7 @@ class _HomepageState extends State<Homepage> {
     var companyid = prefs.getString('companyid');
     try {
       final response =
-          await http.post(Uri.parse('http://$baseurl/api/v1/incident/new'),
+          await http.post(Uri.parse('https://$baseurl/api/v1/incident/new'),
               headers: <String, String>{
                 'Content-Type': 'application/json ',
               },
@@ -225,9 +229,22 @@ class _HomepageState extends State<Homepage> {
                 child: DatePicker(
                   height: 85,
                   DateTime.now(),
+                  // monthTextStyle: GoogleFonts.notoSans(
+                  //     fontWeight: FontWeight.w300,
+                  //     fontSize: screenwidth * 0.030,
+                  //     color: HexColor('#212121') ),
+                  // dayTextStyle: GoogleFonts.notoSans (
+                  //     fontWeight: FontWeight.w300 ,
+                  //     fontSize: screenwidth * 0.030 ,
+                  //     color: HexColor('#212121')   ),
+                  dateTextStyle: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 18,
+                      color: HexColor('#212121')),
                   initialSelectedDate: DateTime.now(),
                   selectionColor: HexColor("#000000"),
-                  // selectedTextColor: HexColor("#EAF3F2"),
+                  deactivatedColor: Colors.white24,
+                  selectedTextColor: HexColor("#EAF3F2"),
                   onDateChange: (date) {
                     setState(() {
                       var selectedValue = date;
@@ -255,9 +272,9 @@ class _HomepageState extends State<Homepage> {
                       children: [
                         Text(
                           "Device info",
-                          style: TextStyle(
+                          style: GoogleFonts.notoSans(
                               fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                              fontSize: screenwidth * 0.044,
                               color: HexColor('#212121')),
                         ),
                         Container(
@@ -269,10 +286,10 @@ class _HomepageState extends State<Homepage> {
                           children: [
                             Text(
                               "See more",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w200,
-                                  fontSize: 16,
-                                  color: HexColor('#000000')),
+                              style: GoogleFonts.notoSans(
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: screenwidth * 0.035,
+                                  color: HexColor('#212121')),
                             ),
                             IconButton(
                               onPressed: (() {}),
@@ -337,7 +354,7 @@ class _HomepageState extends State<Homepage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Icon(Icons.error),
+                              const Icon(Icons.error),
                               SizedBox(
                                 width: 25,
                               ),
@@ -355,18 +372,18 @@ class _HomepageState extends State<Homepage> {
                       ),
                       GestureDetector(
                         onTap: () async {
-                          await getlocation();
+                          // await getlocation();
                           setState(() {
                             contractername = from_name;
                             contracteremail = from_email;
                             contracterphonenumber = from_number;
-                            latitude = getaltitudeval;
-                            longitude = getlatitudeval;
+                            latitude = getlatitudeval;
+                            longitude = getlongitudeval;
                             altitude = getaltitudeval;
                           });
                           await GetInitialdetails();
-                          // await sendbackgroundmessage();
-                          // await sendbackgroundemail();
+                          await sendbackgroundmessage();
+                          await sendbackgroundemail();
 
                           await Addincident(
                               contractername,
@@ -375,6 +392,14 @@ class _HomepageState extends State<Homepage> {
                               latitude,
                               longitude,
                               altitude);
+                          await Fluttertoast.showToast(
+                              msg: 'Incident occured in site',
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 5,
+                              backgroundColor: HexColor('#A5FF8F'),
+                              textColor: HexColor('#000000'),
+                              fontSize: 16.0);
                         },
                         child: Container(
                           width: 100,
@@ -398,22 +423,19 @@ class _HomepageState extends State<Homepage> {
   }
 }
 
-
-
-
-    // if (statuses[Permission.camera]!.isDenied) {
-    //   openAppSettings();
-    //   print("Camera permission is denied.");
-    // }
-    // if (statuses[Permission.storage]!.isDenied) {
-    //   openAppSettings();
-    //   print("Location permission is denied.");
-    // }
-    // if (statuses[Permission.sms]!.isDenied) {
-    //   openAppSettings();
-    //   print("Location permission is denied.");
-    // }
-    // if (statuses[Permission.phone]!.isDenied) {
-    //   openAppSettings();
-    //   print("Location permission is denied.");
-    // }
+// if (statuses[Permission.camera]!.isDenied) {
+//   openAppSettings();
+//   print("Camera permission is denied.");
+// }
+// if (statuses[Permission.storage]!.isDenied) {
+//   openAppSettings();
+//   print("Location permission is denied.");
+// }
+// if (statuses[Permission.sms]!.isDenied) {
+//   openAppSettings();
+//   print("Location permission is denied.");
+// }
+// if (statuses[Permission.phone]!.isDenied) {
+//   openAppSettings();
+//   print("Location permission is denied.");
+// }

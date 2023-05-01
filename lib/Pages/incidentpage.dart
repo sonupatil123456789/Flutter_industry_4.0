@@ -6,6 +6,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:http/http.dart' as http;
 import 'package:location_tracker/formspages/Editincidentform.dart';
@@ -40,7 +41,7 @@ class _IncidentpageState extends State<Incidentpage> {
     var companyid = prefs.getString('companyid');
     try {
       final response = await http.get(Uri.parse(
-          'http://$baseurl/api/v1/contracteraccountincident/$companyid'));
+          'https://$baseurl/api/v1/contracteraccountincident/$companyid'));
       if (response.statusCode == 200) {
         setState(() {
           stringresponse = response.body;
@@ -98,380 +99,422 @@ class _IncidentpageState extends State<Incidentpage> {
           height: screenheight,
           color: HexColor('#FFFFFF'),
           child: Column(children: [
-            const Back_btn_navbar(navname: "Incident"),
+            Back_btn_navbar(navname: "Incident"),
             SizedBox(
               height: 20,
             ),
             Expanded(
-              child: Container(
-                child: ListView.builder(
-                    itemCount: mapresponsedata.length,
-                    itemBuilder: ((context, index) {
-                      return GestureDetector(
-                        onTap: () {
-                          // builtdialogbox();
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) =>
-                                _buildPopupDialog(
-                                    context,
-                                    screenwidth,
-                                    screenheight,
-                                    mapresponsedata[index]["contractername"],
-                                    mapresponsedata[index]["contracteremail"],
-                                    mapresponsedata[index]["contracternumber"],
-                                    mapresponsedata[index]["incidenttype"],
-                                    mapresponsedata[index]["totalinvestment"],
-                                    mapresponsedata[index]
+              child: mapresponse == null
+                  ? Center(
+                      child: CircularProgressIndicator(
+                      color: HexColor("#6C63FF"),
+                      strokeWidth: 6,
+                    ))
+                  : Container(
+                      child: ListView.builder(
+                          itemCount: mapresponsedata.length,
+                          itemBuilder: ((context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                // builtdialogbox();
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      _buildPopupDialog(
+                                          context,
+                                          screenwidth,
+                                          screenheight,
+                                          mapresponsedata[index]
+                                              ["contractername"],
+                                          mapresponsedata[index]
+                                              ["contracteremail"],
+                                          mapresponsedata[index]
+                                              ["contracternumber"],
+                                          mapresponsedata[index]
+                                              ["incidenttype"],
+                                          mapresponsedata[index]
+                                              ["totalinvestment"],
+                                          mapresponsedata[index]
+                                              ["totalfinancialloss"],
+                                          mapresponsedata[index]
+                                              ["noofpeopleenjured"],
+                                          mapresponsedata[index]
+                                              ["noofpeopledead"],
+                                          mapresponsedata[index]
+                                              ["incidentlocation"]["latitude"],
+                                          mapresponsedata[index]
+                                              ["incidentlocation"]["longitude"],
+                                          mapresponsedata[index]["createdAt"]
+                                              .substring(0, 10)),
+                                );
+                              },
+                              onDoubleTap: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return Editincidentform(
+                                    objectid: mapresponsedata[index]["_id"],
+                                    deadpeopleinin: mapresponsedata[index]
+                                        ["noofpeopledead"],
+                                    enjuredpeopleinin: mapresponsedata[index]
+                                        ["noofpeopleenjured"],
+                                    finenciallossesinin: mapresponsedata[index]
                                         ["totalfinancialloss"],
-                                    mapresponsedata[index]["noofpeopleenjured"],
-                                    mapresponsedata[index]["noofpeopledead"],
-                                    mapresponsedata[index]["incidentlocation"]
-                                        ["latitude"],
-                                    mapresponsedata[index]["incidentlocation"]
-                                        ["longitude"],
-                                    mapresponsedata[index]["createdAt"]
-                                        .substring(0, 10)),
-                          );
-                        },
-                        onDoubleTap: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return Editincidentform(
-                              objectid: mapresponsedata[index]["_id"],
-                              deadpeopleinin: mapresponsedata[index]
-                                  ["noofpeopledead"],
-                              enjuredpeopleinin: mapresponsedata[index]
-                                  ["noofpeopleenjured"],
-                              finenciallossesinin: mapresponsedata[index]
-                                  ["totalfinancialloss"],
-                              incidenttypeinit: mapresponsedata[index]
-                                  ["incidenttype"],
-                              totalinvestment: mapresponsedata[index]
-                                  ["totalinvestment"],
-                              pdfeinit: mapresponsedata[index]["pdffilelink"],
-                            );
-                          }));
-                        },
-                        child: Container(
-                          height: 240,
-                          width: screenwidth,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: screenwidth * 0.90,
-                                height: 200,
-                                decoration: BoxDecoration(
-                                  color: HexColor('#FFFFFF'),
-                                  borderRadius: BorderRadius.circular(14),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Color(0x337c99b3),
-                                      blurRadius: 30,
-                                      offset: Offset(6, 6),
-                                    ),
-                                    BoxShadow(
-                                      color: Color(0x1c5690c5),
-                                      blurRadius: 4,
-                                      offset: Offset(2, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Stack(
+                                    incidenttypeinit: mapresponsedata[index]
+                                        ["incidenttype"],
+                                    totalinvestment: mapresponsedata[index]
+                                        ["totalinvestment"],
+                                    pdfeinit: mapresponsedata[index]
+                                        ["pdffilelink"],
+                                  );
+                                }));
+                              },
+                              child: Container(
+                                height: 240,
+                                width: screenwidth,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Positioned(
-                                      top: 12,
-                                      right: -16,
-                                      child: Transform(
-                                        alignment: FractionalOffset.center,
-                                        transform: new Matrix4.identity()
-                                          ..rotateZ(45 * 3.1415927 / 180),
-                                        child: Container(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                0, 2, 0, 0),
-                                            alignment: Alignment.center,
-                                            width: screenwidth * 0.18,
-                                            height: 18,
-                                            child: Text(
-                                              mapresponsedata[index]
-                                                      ["createdAt"]
-                                                  .substring(0, 10),
-                                              maxLines: 1,
-                                              softWrap: false,
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w400,
-                                                  fontSize: screenwidth * 0.026,
-                                                  color: HexColor('#FFFFFF')),
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: HexColor('#948EFF'),
-                                            )),
+                                    Container(
+                                      width: screenwidth * 0.90,
+                                      height: 200,
+                                      decoration: BoxDecoration(
+                                        color: HexColor('#FFFFFF'),
+                                        borderRadius: BorderRadius.circular(14),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Color(0x337c99b3),
+                                            blurRadius: 30,
+                                            offset: Offset(6, 6),
+                                          ),
+                                          BoxShadow(
+                                            color: Color(0x1c5690c5),
+                                            blurRadius: 4,
+                                            offset: Offset(2, 2),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () {
-                                                  downloadimagefile(
-                                                      mapresponsedata[index]
-                                                          ["pdffilelink"],
-                                                      mapresponsedata[index]
-                                                              ["createdAt"]
-                                                          .substring(0, 10));
-                                                },
-                                                child: Container(
-                                                  width: 48.0,
-                                                  height: 58.0,
-                                                  decoration: BoxDecoration(
-                                                    // color: Colors.cyanAccent,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
+                                      child: Stack(
+                                        children: [
+                                          Positioned(
+                                            top: 12,
+                                            right: -16,
+                                            child: Transform(
+                                              alignment:
+                                                  FractionalOffset.center,
+                                              transform: new Matrix4.identity()
+                                                ..rotateZ(45 * 3.1415927 / 180),
+                                              child: Container(
+                                                  padding:
+                                                      const EdgeInsets.fromLTRB(
+                                                          0, 2, 0, 0),
+                                                  alignment: Alignment.center,
+                                                  width: screenwidth * 0.18,
+                                                  height: 18,
+                                                  child: Text(
+                                                    mapresponsedata[index]
+                                                            ["createdAt"]
+                                                        .substring(0, 10),
+                                                    maxLines: 1,
+                                                    softWrap: false,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        fontSize:
+                                                            screenwidth * 0.026,
+                                                        color: HexColor(
+                                                            '#FFFFFF')),
                                                   ),
-                                                  child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      child: Image.asset(
-                                                          'assets/pdf-file.png',
-                                                          fit: BoxFit.cover)),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                width: screenwidth * 0.037,
-                                              ),
-                                              Container(
-                                                // color: Colors.amber,
-                                                width: screenwidth * 0.62,
-                                                height: 60,
-                                                child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        mapresponsedata[index]
-                                                            ["contractername"],
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize:
-                                                                screenwidth *
-                                                                    0.050,
-                                                            color: HexColor(
-                                                                '#212121')),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 4,
-                                                      ),
-                                                      Text(
-                                                        mapresponsedata[index]
-                                                            ["contracteremail"],
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            fontSize:
-                                                                screenwidth *
-                                                                    0.035,
-                                                            color: HexColor(
-                                                                '#212121')),
-                                                      ),
-                                                    ]),
-                                              ),
-                                            ]),
-                                        SizedBox(
-                                          height: 12,
-                                          // child: Text("hided"),
-                                        ),
-                                        Container(
-                                          height: 70,
-                                          color:
-                                              // Color.fromARGB(255, 101, 157, 254),
-                                              // HexColor('#6C63FF'),
-                                              HexColor('#746CFF'),
-                                          child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                                  decoration: BoxDecoration(
+                                                    color: HexColor('#948EFF'),
+                                                  )),
+                                            ),
+                                          ),
+                                          Column(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
                                             children: [
+                                              Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        downloadimagefile(
+                                                            mapresponsedata[
+                                                                    index]
+                                                                ["pdffilelink"],
+                                                            mapresponsedata[
+                                                                        index][
+                                                                    "createdAt"]
+                                                                .substring(
+                                                                    0, 10));
+                                                      },
+                                                      child: Container(
+                                                        width: 48.0,
+                                                        height: 58.0,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          // color: Colors.cyanAccent,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                        child: ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                            child: Image.asset(
+                                                                'assets/pdf-file.png',
+                                                                fit: BoxFit
+                                                                    .cover)),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width:
+                                                          screenwidth * 0.037,
+                                                    ),
+                                                    Container(
+                                                      // color: Colors.amber,
+                                                      width: screenwidth * 0.62,
+                                                      height: 60,
+                                                      child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                              mapresponsedata[
+                                                                      index][
+                                                                  "contractername"],
+                                                              style: GoogleFonts.poppins(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize:
+                                                                      screenwidth *
+                                                                          0.042,
+                                                                  color: HexColor(
+                                                                      '#212121')),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 4,
+                                                            ),
+                                                            Text(
+                                                              mapresponsedata[
+                                                                      index][
+                                                                  "contracteremail"],
+                                                              style: GoogleFonts.notoSans(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  fontSize:
+                                                                      screenwidth *
+                                                                          0.030,
+                                                                  color: HexColor(
+                                                                      '#212121')),
+                                                            ),
+                                                          ]),
+                                                    ),
+                                                  ]),
                                               SizedBox(
-                                                width: 6,
+                                                height: 12,
+                                                // child: Text("hided"),
                                               ),
                                               Container(
-                                                // color: Colors.amber,
-                                                width: screenwidth * 0.16,
-                                                child: Column(
+                                                height: 70,
+                                                color:
+                                                    // Color.fromARGB(255, 101, 157, 254),
+                                                    // HexColor('#6C63FF'),
+                                                    HexColor('#746CFF'),
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.center,
                                                   children: [
-                                                    Text(
-                                                      "Enjured",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w300,
-                                                          fontSize:
-                                                              screenwidth *
-                                                                  0.04,
-                                                          color: HexColor(
-                                                              '#FFFFFF')),
+                                                    SizedBox(
+                                                      width: 6,
+                                                    ),
+                                                    Container(
+                                                      // color: Colors.amber,
+                                                      width: screenwidth * 0.16,
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            "Enjured",
+                                                            style: GoogleFonts.notoSans(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w300,
+                                                                fontSize:
+                                                                    screenwidth *
+                                                                        0.032,
+                                                                color: HexColor(
+                                                                    '#FFFFFF')),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 8,
+                                                          ),
+                                                          Text(
+                                                            mapresponsedata[
+                                                                        index][
+                                                                    "noofpeopleenjured"]
+                                                                .toString(),
+                                                            style: GoogleFonts.poppins(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                fontSize:
+                                                                    screenwidth *
+                                                                        0.048,
+                                                                color: HexColor(
+                                                                    '#FFFFFF')),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                     SizedBox(
-                                                      height: 8,
+                                                      width: 28,
                                                     ),
-                                                    Text(
-                                                      mapresponsedata[index][
-                                                              "noofpeopleenjured"]
-                                                          .toString(),
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w800,
-                                                          fontSize:
-                                                              screenwidth *
-                                                                  0.06,
-                                                          color: HexColor(
-                                                              '#FFFFFF')),
+                                                    Container(
+                                                      // color: Colors.amber,
+                                                      width: screenwidth * 0.16,
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            "Death",
+                                                            style: GoogleFonts.notoSans(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w300,
+                                                                fontSize:
+                                                                    screenwidth *
+                                                                        0.032,
+                                                                color: HexColor(
+                                                                    '#FFFFFF')),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 8,
+                                                          ),
+                                                          Text(
+                                                            mapresponsedata[
+                                                                        index][
+                                                                    "noofpeopledead"]
+                                                                .toString(),
+                                                            style: GoogleFonts.poppins(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                fontSize:
+                                                                    screenwidth *
+                                                                        0.048,
+                                                                color: HexColor(
+                                                                    '#FFFFFF')),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 28,
+                                                    ),
+                                                    Container(
+                                                      // color: Colors.amber,
+                                                      width: screenwidth * 0.36,
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            "Finencial loss",
+                                                            style: GoogleFonts.notoSans(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w300,
+                                                                fontSize:
+                                                                    screenwidth *
+                                                                        0.032,
+                                                                color: HexColor(
+                                                                    '#FFFFFF')),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 8,
+                                                          ),
+                                                          Row(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              SizedBox(
+                                                                width: 6,
+                                                              ),
+                                                              Text(
+                                                                mapresponsedata[
+                                                                            index]
+                                                                        [
+                                                                        "totalfinancialloss"]
+                                                                    .toString(),
+                                                                style: GoogleFonts.poppins(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                    fontSize:
+                                                                        screenwidth *
+                                                                            0.048,
+                                                                    color: HexColor(
+                                                                        '#FFFFFF')),
+                                                              ),
+                                                              SizedBox(
+                                                                width: 5,
+                                                              ),
+                                                              Text(
+                                                                "₹",
+                                                                style: GoogleFonts.notoSans(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    fontSize:
+                                                                        screenwidth *
+                                                                            0.052,
+                                                                    color: HexColor(
+                                                                        '#FFFFFF')),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
-                                              ),
-                                              SizedBox(
-                                                width: 28,
-                                              ),
-                                              Container(
-                                                // color: Colors.amber,
-                                                width: screenwidth * 0.16,
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      "Death",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w300,
-                                                          fontSize:
-                                                              screenwidth *
-                                                                  0.04,
-                                                          color: HexColor(
-                                                              '#FFFFFF')),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 8,
-                                                    ),
-                                                    Text(
-                                                      mapresponsedata[index]
-                                                              ["noofpeopledead"]
-                                                          .toString(),
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w800,
-                                                          fontSize:
-                                                              screenwidth *
-                                                                  0.06,
-                                                          color: HexColor(
-                                                              '#FFFFFF')),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                width: 28,
-                                              ),
-                                              Container(
-                                                // color: Colors.amber,
-                                                width: screenwidth * 0.36,
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      "Finencial loss",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w300,
-                                                          fontSize:
-                                                              screenwidth *
-                                                                  0.04,
-                                                          color: HexColor(
-                                                              '#FFFFFF')),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 8,
-                                                    ),
-                                                    Row(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        SizedBox(
-                                                          width: 6,
-                                                        ),
-                                                        Text(
-                                                          mapresponsedata[index]
-                                                                  [
-                                                                  "totalfinancialloss"]
-                                                              .toString(),
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w800,
-                                                              fontSize:
-                                                                  screenwidth *
-                                                                      0.06,
-                                                              color: HexColor(
-                                                                  '#FFFFFF')),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 5,
-                                                        ),
-                                                        Text(
-                                                          "₹",
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w300,
-                                                              fontSize:
-                                                                  screenwidth *
-                                                                      0.05,
-                                                              color: HexColor(
-                                                                  '#FFFFFF')),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
+                                              )
                                             ],
                                           ),
-                                        )
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                      );
-                    })),
-              ),
+                            );
+                          })),
+                    ),
             ),
           ])),
     ));
@@ -494,6 +537,8 @@ Widget _buildPopupDialog(
     long,
     incidentdate) {
   var email = contracteremail;
+  var calctext = totalfinancialloss / totalinvestment * 100;
+  print("======$calctext");
   print(totalfinancialloss / totalinvestment * 100 / 100);
   return Dialog(
     shape: RoundedRectangleBorder(
@@ -515,9 +560,9 @@ Widget _buildPopupDialog(
                     padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
                     child: Text(
                       contractername,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: screenwidth * 0.052,
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w700,
+                          fontSize: screenwidth * 0.046,
                           color: HexColor('#212121')),
                     ),
                   ),
@@ -530,15 +575,15 @@ Widget _buildPopupDialog(
                       padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
                       child: Text(
                         incidentdate,
-                        style: TextStyle(
+                        style: GoogleFonts.notoSans(
                             fontWeight: FontWeight.w400,
-                            fontSize: screenwidth * 0.040,
+                            fontSize: screenwidth * 0.034,
                             color: HexColor('#212121')),
                       ),
                     ),
                   ),
                   SizedBox(
-                    height: 10,
+                    height: screenheight * 0.02,
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
@@ -558,7 +603,7 @@ Widget _buildPopupDialog(
                               // color: HexColor('#B064B0'), //F5F3F5
                               child: IconButton(
                                 tooltip: contracteremail.toString(),
-                                iconSize: 24,
+                                iconSize: 20,
                                 icon: const Icon(
                                   Icons.mark_email_unread,
                                 ),
@@ -587,7 +632,7 @@ Widget _buildPopupDialog(
                               ),
                               child: IconButton(
                                 tooltip: contracternumber.toString(),
-                                iconSize: 24,
+                                iconSize: 20,
                                 icon: const Icon(
                                   Icons.phone_in_talk,
                                 ),
@@ -616,7 +661,7 @@ Widget _buildPopupDialog(
                               ),
                               child: IconButton(
                                 tooltip: contracternumber.toString(),
-                                iconSize: 24,
+                                iconSize: 20,
                                 icon: const Icon(
                                   Icons.sms,
                                 ),
@@ -644,7 +689,7 @@ Widget _buildPopupDialog(
                                 color: HexColor("#EAF6F8"), //CFEAEE EAF6F8
                               ),
                               child: IconButton(
-                                iconSize: 24,
+                                iconSize: 20,
                                 icon: const Icon(
                                   Icons.near_me,
                                 ),
@@ -657,7 +702,7 @@ Widget _buildPopupDialog(
                 ]),
             Container(
               width: screenheight * 0.60,
-              height: 100,
+              height: screenheight * 0.10,
               // color: Colors.amber,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -667,19 +712,19 @@ Widget _buildPopupDialog(
                     padding: const EdgeInsets.only(left: 8, top: 0, right: 0),
                     child: Text(
                       "Incident discription",
-                      style: TextStyle(
-                          color: HexColor("#746CFF"),
-                          fontSize: screenwidth * 0.050,
-                          fontWeight: FontWeight.w600),
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w600,
+                          fontSize: screenwidth * 0.045,
+                          color: HexColor('#746CFF')),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 8, top: 2, right: 0),
                     child: Text(
                       incidenttype,
-                      style: TextStyle(
-                          fontWeight: FontWeight.w300,
-                          fontSize: screenwidth * 0.036,
+                      style: GoogleFonts.notoSans(
+                          fontWeight: FontWeight.w400,
+                          fontSize: screenwidth * 0.032,
                           color: HexColor('#212121')),
                     ),
                   ),
@@ -705,19 +750,19 @@ Widget _buildPopupDialog(
                       children: [
                         Text(
                           "Enjured",
-                          style: TextStyle(
+                          style: GoogleFonts.notoSans(
                               fontWeight: FontWeight.w300,
-                              fontSize: screenwidth * 0.04,
+                              fontSize: screenwidth * 0.034,
                               color: HexColor('#212121')),
                         ),
                         SizedBox(
-                          height: 8,
+                          height: 2,
                         ),
                         Text(
                           noofpeopleenjured.toString(),
-                          style: TextStyle(
-                              fontWeight: FontWeight.w800,
-                              fontSize: screenwidth * 0.05,
+                          style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w700,
+                              fontSize: screenwidth * 0.052,
                               color: HexColor('#F7CD4D')),
                         ),
                       ],
@@ -734,19 +779,19 @@ Widget _buildPopupDialog(
                       children: [
                         Text(
                           "Death",
-                          style: TextStyle(
+                          style: GoogleFonts.notoSans(
                               fontWeight: FontWeight.w300,
-                              fontSize: screenwidth * 0.04,
+                              fontSize: screenwidth * 0.034,
                               color: HexColor('#212121')),
                         ),
                         SizedBox(
-                          height: 8,
+                          height: 2,
                         ),
                         Text(
                           noofpeopledead.toString(),
-                          style: TextStyle(
-                              fontWeight: FontWeight.w800,
-                              fontSize: screenwidth * 0.05,
+                          style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w700,
+                              fontSize: screenwidth * 0.052,
                               color: HexColor('#F84C4C')),
                         ),
                       ],
@@ -769,9 +814,17 @@ Widget _buildPopupDialog(
                     animationDuration: 2000,
                     radius: 50.0,
                     lineWidth: 12.0,
-                    percent: totalfinancialloss / totalinvestment * 100 / 100,
+                    percent: calctext.isNaN
+                        ? 0.0
+                        : calctext /
+                            100, // totalfinancialloss / totalinvestment * 100 / 100,
                     center: Text(
-                        "${totalfinancialloss / totalinvestment * 100.truncate()}%"),
+                      "${calctext.isNaN ? "0" : calctext.toInt()}%",
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w700,
+                          fontSize: screenwidth * 0.03,
+                          color: HexColor('#212121')),
+                    ),
                     progressColor: HexColor("#6C63FF"),
                   ),
                 ),
@@ -790,9 +843,9 @@ Widget _buildPopupDialog(
                             children: [
                               Text(
                                 "Finencial loss",
-                                style: TextStyle(
+                                style: GoogleFonts.notoSans(
                                     fontWeight: FontWeight.w300,
-                                    fontSize: screenwidth * 0.04,
+                                    fontSize: screenwidth * 0.034,
                                     color: HexColor('#212121')),
                               ),
                               SizedBox(
@@ -807,9 +860,9 @@ Widget _buildPopupDialog(
                                   ),
                                   Text(
                                     totalfinancialloss.toString(),
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: screenwidth * 0.05,
+                                    style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: screenwidth * 0.048,
                                         color: HexColor('#212121')),
                                   ),
                                   SizedBox(
@@ -835,9 +888,9 @@ Widget _buildPopupDialog(
                             children: [
                               Text(
                                 "Investment cost",
-                                style: TextStyle(
+                                style: GoogleFonts.notoSans(
                                     fontWeight: FontWeight.w300,
-                                    fontSize: screenwidth * 0.04,
+                                    fontSize: screenwidth * 0.034,
                                     color: HexColor('#212121')),
                               ),
                               SizedBox(
@@ -852,9 +905,9 @@ Widget _buildPopupDialog(
                                   ),
                                   Text(
                                     totalinvestment.toString(),
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: screenwidth * 0.05,
+                                    style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: screenwidth * 0.048,
                                         color: HexColor('#212121')),
                                   ),
                                   SizedBox(

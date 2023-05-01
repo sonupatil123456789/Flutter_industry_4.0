@@ -10,6 +10,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -118,11 +119,26 @@ class _AddworkerformState extends State<Addworkerform> {
   var companyid;
   Future Addworkerdata(workername, workeremail, workernumber, images, birthdate,
       address, age, gender, weight, height, bloodgroup, adharnumber) async {
+    var box = {
+      workername,
+      workeremail,
+      workernumber,
+      images,
+      birthdate,
+      address,
+      age,
+      gender,
+      weight,
+      height,
+      bloodgroup,
+      adharnumber
+    };
+    print(box);
     final prefs = await SharedPreferences.getInstance();
     companyid = prefs.getString('companyid');
     try {
       final response =
-          await http.post(Uri.parse('http://$baseurl/api/v1/worker/new'),
+          await http.post(Uri.parse('https://$baseurl/api/v1/worker/new'),
               headers: <String, String>{
                 'Content-Type': 'application/json ',
               },
@@ -149,13 +165,43 @@ class _AddworkerformState extends State<Addworkerform> {
           stringresponse = response.body;
           mapresponse = jsonDecode(stringresponse);
           print(mapresponse);
-          print("id is = ${mapresponse["worker"]["_id"].toString()}");
+          Fluttertoast.showToast(
+              msg: "${mapresponse["message"]}",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 5,
+              backgroundColor: HexColor('#A5FF8F'),
+              textColor: HexColor('#000000'),
+              fontSize: 16.0);
+        });
+      }
+      if (response.statusCode == 402) {
+        setState(() {
+          stringresponse = response.body;
+          mapresponse = jsonDecode(stringresponse);
+          print(mapresponse);
+          Fluttertoast.showToast(
+              msg: "${mapresponse["message"]}",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 5,
+              backgroundColor: HexColor('#A5FF8F'),
+              textColor: HexColor('#000000'),
+              fontSize: 16.0);
         });
       } else {
         return null;
       }
     } catch (e) {
-      print("error1 = $e");
+      Fluttertoast.showToast(
+          msg: "$e",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 5,
+          backgroundColor: HexColor('#A5FF8F'),
+          textColor: HexColor('#000000'),
+          fontSize: 16.0);
+      print("$e");
     }
   }
 
@@ -170,19 +216,19 @@ class _AddworkerformState extends State<Addworkerform> {
           .set({
         "accident": false,
         "heartrate": 0,
-        "timeworked": "",
+        "timeworked": "00:00:00",
         "duty": false,
-        "hilmetdistance": false,
+        "helmetdistance": false,
         "imagepic": "${workerimage.toString()}",
         "weight":
             "${mapresponse["worker"]["medicalinformation"]["weight"].toString()}",
         "id": "${mapresponse["worker"]["_id"].toString()}",
         "name": "${mapresponse["worker"]["workername"].toString()}",
-        "position": {"lat": 0, "long": 0, "alt": 0},
+        "position": {"lat": 18.7939, "long": 73.3346, "alt": 0},
         "stepcount": 0
       });
     } catch (e) {
-      print("error2 = $e");
+      print("$e");
     }
   }
 
@@ -194,7 +240,7 @@ class _AddworkerformState extends State<Addworkerform> {
         body: SafeArea(
             child: Column(
       children: [
-        const Back_btn_navbar(navname: "Add information"),
+        Back_btn_navbar(navname: "Add information"),
         Expanded(
           child: Container(
               width: screenwidth,
@@ -273,12 +319,12 @@ class _AddworkerformState extends State<Addworkerform> {
                                               ),
                                               Text(
                                                 "Male",
-                                                style: TextStyle(
+                                                style: GoogleFonts.notoSans(
                                                     color: box2color,
                                                     fontSize:
-                                                        screenwidth * 0.04,
+                                                        screenwidth * 0.03,
                                                     fontWeight:
-                                                        FontWeight.w500),
+                                                        FontWeight.w400),
                                               ),
                                             ],
                                           ),
@@ -317,12 +363,12 @@ class _AddworkerformState extends State<Addworkerform> {
                                               ),
                                               Text(
                                                 "Female",
-                                                style: TextStyle(
+                                                style: GoogleFonts.notoSans(
                                                     color: box1color,
                                                     fontSize:
-                                                        screenwidth * 0.04,
+                                                        screenwidth * 0.03,
                                                     fontWeight:
-                                                        FontWeight.w500),
+                                                        FontWeight.w400),
                                               ),
                                             ],
                                           ),
@@ -350,7 +396,12 @@ class _AddworkerformState extends State<Addworkerform> {
                                       onPressed: () {
                                         _selectDate(context);
                                       },
-                                      child: Text("Birthdate"),
+                                      child: Text("Birthdate",
+                                          style: GoogleFonts.notoSans(
+                                              height: 1.2,
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: screenwidth * 0.030,
+                                              color: HexColor('#FFFFFF'))),
                                     ),
                                   ),
                                 ],
@@ -371,13 +422,12 @@ class _AddworkerformState extends State<Addworkerform> {
                         width: screenwidth * 0.80,
                         child: Padding(
                           padding: const EdgeInsets.all(9.0),
-                          child: Text(
-                            "Personal Information",
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 0, 0, 0),
-                                fontSize: screenwidth * 0.055,
-                                fontWeight: FontWeight.w500),
-                          ),
+                          child: Text("Personal Information",
+                              style: GoogleFonts.notoSans(
+                                  height: 1.2,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: screenwidth * 0.050,
+                                  color: HexColor('#212121'))),
                         ),
                       ),
                       buildTextField(
@@ -432,13 +482,12 @@ class _AddworkerformState extends State<Addworkerform> {
                         width: screenwidth * 0.80,
                         child: Padding(
                           padding: const EdgeInsets.all(9.0),
-                          child: Text(
-                            "Medical information",
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 0, 0, 0),
-                                fontSize: screenwidth * 0.055,
-                                fontWeight: FontWeight.w500),
-                          ),
+                          child: Text("Medical information",
+                              style: GoogleFonts.notoSans(
+                                  height: 1.2,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: screenwidth * 0.050,
+                                  color: HexColor('#212121'))),
                         ),
                       ),
                       buildTextField("Age", '45', false, screenwidth * 0.80,
@@ -537,9 +586,9 @@ class _AddworkerformState extends State<Addworkerform> {
                     workeradress = Addresscontroller.text;
                     workerage = Agecontroller.text;
                     workergender = radiovalue;
-                    workerweight = Heightcontroller.text;
-                    workerheight = Weightcontroller.text;
-                    workerbloodgroup = Bloodgroupcontroller.text;
+                    workerweight = Weightcontroller.text;
+                    workerheight = Heightcontroller.text;
+                    workerbloodgroup = Bloodgroupcontroller.text.toString();
                     workeradhar = Adharcardcontroller.text;
                     print(
                         '----$workername--$workeremail--$workerno--${workerbirthdate.substring(0, 11)}--$workergender--');
@@ -551,7 +600,7 @@ class _AddworkerformState extends State<Addworkerform> {
                         workerbirthdate,
                         workeradress,
                         workerage,
-                        workergender,
+                        workergender == null ? "un known " : workergender,
                         workerweight,
                         workerheight,
                         workerbloodgroup,

@@ -9,13 +9,13 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:http/http.dart' as http;
 import 'package:location_tracker/Components/Listcard.dart';
 import 'package:location_tracker/Pages/Workerhealthpage.dart';
 import 'package:location_tracker/formspages/Addworkerform.dart';
 import 'package:location_tracker/formspages/Updateworkerform.dart';
-import 'package:location_tracker/models/workerdetailmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Components/Backbtnnavbar.dart';
 
@@ -68,7 +68,7 @@ class _AllworkerlistState extends State<Allworkerlist> {
               height: screenheight,
               color: HexColor("#FFFFFF"),
               child: Column(children: [
-                const Back_btn_navbar(navname: "worker details"),
+                Back_btn_navbar(navname: "worker details"),
                 SizedBox(
                   height: 20,
                 ),
@@ -84,7 +84,7 @@ class _AllworkerlistState extends State<Allworkerlist> {
                       )),
                       itemBuilder: ((context, snapshot, animation, index) {
                         var helmetvalue =
-                            snapshot.child('hilmetdistance').value;
+                            snapshot.child('helmetdistance').value;
                         var accident = snapshot.child('accident').value;
                         return Slidable(
                             startActionPane: ActionPane(
@@ -125,8 +125,29 @@ class _AllworkerlistState extends State<Allworkerlist> {
                                         .child(
                                             '/${snapshot.child('id').value.toString()}')
                                         .remove()
-                                        .then((value) => print(
-                                            '${snapshot.child('id').value.toString()}deleted successfully'));
+                                        .then((value) => Fluttertoast.showToast(
+                                            msg:
+                                                '${snapshot.child('id').value.toString()}deleted successfully',
+                                            toastLength: Toast.LENGTH_SHORT,
+                                            gravity: ToastGravity.CENTER,
+                                            timeInSecForIosWeb: 5,
+                                            backgroundColor:
+                                                HexColor('#A5FF8F'),
+                                            textColor: HexColor('#000000'),
+                                            fontSize: 16.0))
+                                        .catchError((error) => {
+                                              Fluttertoast.showToast(
+                                                  msg: '$error',
+                                                  toastLength:
+                                                      Toast.LENGTH_SHORT,
+                                                  gravity: ToastGravity.CENTER,
+                                                  timeInSecForIosWeb: 5,
+                                                  backgroundColor:
+                                                      HexColor('#A5FF8F'),
+                                                  textColor:
+                                                      HexColor('#000000'),
+                                                  fontSize: 16.0)
+                                            });
                                   },
                                   backgroundColor: HexColor("#FFD0D7"),
                                   foregroundColor: HexColor('#000000'),
@@ -137,7 +158,7 @@ class _AllworkerlistState extends State<Allworkerlist> {
                             ),
                             child: GestureDetector(
                               onTap: () {
-                                print("hello user");
+                                // Worker_health_page();
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: (context) {
                                   return Worker_health_page(
@@ -154,15 +175,16 @@ class _AllworkerlistState extends State<Allworkerlist> {
                               },
                               child: Container(
                                 width: screenwidth,
+                                // color: Colors.amber,
                                 height: 80,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(20),
                                     //  <num>(t) => t == 50 ? 0 : null,
                                     color: (accident == true
                                         ? HexColor("#FFD0D7")
-                                        : (helmetvalue == true
+                                        : helmetvalue == true
                                             ? HexColor('#FFFAD1')
-                                            : HexColor("#FFFFFF")))),
+                                            : HexColor("#FFFFFF"))),
                                 child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:
@@ -172,8 +194,8 @@ class _AllworkerlistState extends State<Allworkerlist> {
                                         width: screenwidth * 0.10,
                                       ),
                                       Container(
-                                        width: 40.0,
-                                        height: 40.0,
+                                        width: 42.0,
+                                        height: 42.0,
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(20),
@@ -187,7 +209,7 @@ class _AllworkerlistState extends State<Allworkerlist> {
                                                       .toString() ==
                                                   "null"
                                               ? Image.asset(
-                                                  'assets/profile.jpg',
+                                                  'assets/profile.jpeg',
                                                   fit: BoxFit.cover)
                                               : Image.network(
                                                   snapshot
@@ -211,22 +233,22 @@ class _AllworkerlistState extends State<Allworkerlist> {
                                                   .child('name')
                                                   .value
                                                   .toString(),
-                                              style: TextStyle(
+                                              style: GoogleFonts.notoSans(
                                                   fontWeight: FontWeight.bold,
-                                                  fontSize: 20,
+                                                  fontSize: screenwidth * 0.042,
                                                   color: HexColor('#212121')),
                                             ),
                                             SizedBox(
-                                              height: 5,
+                                              height: 4,
                                             ),
                                             Text(
                                               snapshot
                                                   .child('id')
                                                   .value
                                                   .toString(),
-                                              style: TextStyle(
+                                              style: GoogleFonts.notoSans(
                                                   fontWeight: FontWeight.w300,
-                                                  fontSize: 14,
+                                                  fontSize: screenwidth * 0.030,
                                                   color: HexColor('#212121')),
                                             )
                                           ]),

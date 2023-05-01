@@ -1,251 +1,613 @@
-import 'dart:async';
-import 'dart:convert';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:hexcolor/hexcolor.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'dart:async';
+// import 'dart:ui';
+// import 'package:firebase_database/firebase_database.dart';
+// import 'package:firebase_database/ui/firebase_animated_list.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter/src/foundation/key.dart';
+// import 'package:flutter/src/widgets/framework.dart';
+// import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:google_fonts/google_fonts.dart';
+// import 'package:hexcolor/hexcolor.dart';
+// import 'package:location_tracker/Components/Backbtnnavbar.dart';
+// import 'package:location_tracker/Components/Cards.dart';
+// import 'package:location_tracker/Pages/Locationpage.dart';
+// import 'package:location_tracker/Pages/Workerinfo.dart';
+// import 'package:location_tracker/formspages/Updateworkerform.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
-import '../Pages/Workerhealthpage.dart';
-import '../formspages/Updateworkerform.dart';
+// const blood = 'assets/blood.svg';
+// const heart = 'assets/heart.svg';
+// const calories = 'assets/calories.svg';
+// const steps = 'assets/steps.svg';
 
-class Listcaerd extends StatefulWidget {
-  const Listcaerd({
-    super.key,
-  });
+// class Worker_health_page extends StatefulWidget {
+//   var uuid;
+//   var name;
+//   var profilepic;
+//   var companyid;
 
-  @override
-  State<Listcaerd> createState() => _ListcaerdState();
-}
+//   Worker_health_page(
+//       {Key? key,
+//       required this.uuid,
+//       required this.companyid,
+//       required this.name,
+//       required this.profilepic})
+//       : super(key: key);
 
-class _ListcaerdState extends State<Listcaerd> {
-  var stringresponse;
-  dynamic mapresponse;
-  List mapresponsedata = [];
+//   @override
+//   State<Worker_health_page> createState() => _Worker_health_pageState();
+// }
 
-  String baseurl = dotenv.env['BASEURL']!;
-  var companyid;
+// class _Worker_health_pageState extends State<Worker_health_page> {
+//   // var companyid;
 
-  Future Getallworkersdetails() async {
-    final prefs = await SharedPreferences.getInstance();
-    companyid = prefs.getString('companyid');
-  }
+//   // final database = FirebaseDatabase.instance.ref("workerhealth");
 
-  Object? getstepcountvar;
-  Object? isgetaccident;
-  var accident;
+//   // Future getcompanyid() async {
+//   //   final prefs = await SharedPreferences.getInstance();
+//   //   companyid = prefs.getString('companyid');
+//   // }
 
-  @override
-  initState() {
-    super.initState;
-  }
+//   final database = FirebaseDatabase.instance.ref("companys");
 
-  final String profilepicworker = 'assets/profile.jpg';
-  final database = FirebaseDatabase.instance.ref("companys");
+//   late StreamSubscription heartratedispose;
+//   late StreamSubscription timeworkeddispose;
+//   late StreamSubscription stepcountdispose;
+//   late StreamSubscription dayworkeddispose;
 
-  @override
-  Widget build(BuildContext context) {
-    Getallworkersdetails();
-    double screenwidth = MediaQuery.of(context).size.width;
-    double screenheight = MediaQuery.of(context).size.height;
-    return FirebaseAnimatedList(
-        query: database.child(companyid.toString()).child("siteworkerhealth"),
-        defaultChild: Center(
-            child: CircularProgressIndicator(
-          color: HexColor("#6C63FF"),
-          strokeWidth: 6,
-        )),
-        itemBuilder: ((context, snapshot, animation, index) {
-          print(snapshot.key.toString());
-          return Slidable(
-              startActionPane: ActionPane(
-                motion: const ScrollMotion(),
-                extentRatio: 0.25,
-                children: [
-                  SlidableAction(
-                    onPressed: (buildctx) {
-                      // Future Deletworkerdata() async {
-                      //   try {
-                      //     final response = await http.delete(
-                      //       Uri.parse(
-                      //           'http://$baseurl/api/v1/worker/${mapresponsedata[index]["_id"]}'),
-                      //       headers: <String, String>{
-                      //         'Content-Type': 'application/json; charset=UTF-8',
-                      //       },
-                      //     );
-                      //     print(response.body);
+//   var getheartratevar;
+//   var heartrate;
+//   var getstepcountvar;
+//   var stepcount;
+//   var timeworkeddata;
+//   var timeworked;
+//   var dayworkeddata;
+//   var dayworked;
 
-                      //     if (response.statusCode == 200) {
-                      //       await Fluttertoast.showToast(
-                      //           msg:
-                      //               "Worker deleted from database successfully",
-                      //           toastLength: Toast.LENGTH_SHORT,
-                      //           gravity: ToastGravity.CENTER,
-                      //           timeInSecForIosWeb: 5,
-                      //           backgroundColor: HexColor('#A5FF8F'),
-                      //           textColor: HexColor('#000000'),
-                      //           fontSize: 16.0);
-                      //       setState(() {
-                      //         stringresponse = response;
-                      //       });
-                      //     } else {
-                      //       return null;
-                      //     }
-                      //   } catch (e) {
-                      //     print(e);
-                      //   }
-                      // }
+//   void getheartrate() {
+//     heartratedispose = database
+//         .child(widget.companyid)
+//         .child("siteworkerhealth")
+//         .child('/${widget.uuid}/heartrate')
+//         .onValue
+//         .listen((DatabaseEvent event) {
+//       getheartratevar = event.snapshot.value;
+//       setState(() {
+//         heartrate = "$getheartratevar";
+//       });
+//       print(heartrate);
+//     });
+//   }
 
-                      // Deletworkerdata();
+//   void getstepcount() {
+//     stepcountdispose = database
+//         .child(widget.companyid)
+//         .child("siteworkerhealth")
+//         .child('/${widget.uuid}/stepcount')
+//         .onValue
+//         .listen((DatabaseEvent event) {
+//       getstepcountvar = event.snapshot.value;
+//       setState(() {
+//         stepcount = "$getstepcountvar";
+//       });
+//       print(stepcount);
+//     });
+//   }
 
-                      var datadeleted = database
-                          .child(companyid)
-                          .child("siteworkerhealth")
-                          .child('/${snapshot.child('id').value.toString()}')
-                          .remove()
-                          .then((value) => print(
-                              '${snapshot.child('id').value.toString()}deleted successfully'));
-                    },
-                    backgroundColor: HexColor('#A5FF8F'),
-                    foregroundColor: HexColor('#000000'),
-                    icon: Icons.delete,
-                    label: 'Delete',
-                  ),
-                ],
-              ),
-              endActionPane: ActionPane(
-                motion: ScrollMotion(),
-                extentRatio: 0.25,
-                children: [
-                  SlidableAction(
-                    flex: 2,
-                    onPressed: (buildctx) {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return Updateworkerform(
-                          uuid: mapresponsedata[index]["_id"],
-                          workernameparams: mapresponsedata[index]
-                              ["workername"],
-                          workeremailparams: mapresponsedata[index]
-                              ["workeremail"],
-                          workernumberparams: mapresponsedata[index]
-                              ["workernumber"],
-                          imagesparams: mapresponsedata[index]["images"],
-                          birthdateparams: mapresponsedata[index]["birthdate"],
-                          addressparams: mapresponsedata[index]["address"],
-                          adharnumberparams: mapresponsedata[index]
-                              ["adharnumber"],
-                          ageparams: mapresponsedata[index]
-                              ["medicalinformation"]["age"],
-                          genderparams: mapresponsedata[index]
-                              ["medicalinformation"]["gender"],
-                          heightparams: mapresponsedata[index]
-                              ["medicalinformation"]["height"],
-                          weightparams: mapresponsedata[index]
-                              ["medicalinformation"]["weight"],
-                          bloodgroupparams: mapresponsedata[index]
-                              ["medicalinformation"]["bloodgroup"],
-                          companyid: companyid,
-                        );
-                      }));
-                    },
-                    backgroundColor: HexColor('#A5FF8F'),
-                    foregroundColor: HexColor('#000000'),
-                    icon: Icons.edit,
-                    label: 'Edit',
-                  ),
-                ],
-              ),
-              child: GestureDetector(
-                onTap: () {
-                  print("hello user");
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return Worker_health_page(
-                      uuid: snapshot.child('id').value.toString(),
-                      name: snapshot.child('name').value.toString(),
-                      profilepic: snapshot.child('imagepic').value.toString(),
-                      companyid: companyid,
-                    );
-                  }));
-                },
-                child: Container(
-                  width: screenwidth,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color:
-                        (snapshot.child('accident').value.toString() == "true"
-                            ? HexColor("#FFD0D7")
-                            : HexColor("#FFFFFF")),
-                    // color: HexColor('#EDF7FF'),
-                  ),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 40,
-                        ),
-                        Container(
-                          width: 40.0,
-                          height: 40.0,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: (snapshot
-                                        .child('imagepic')
-                                        .value
-                                        .toString() ==
-                                    "null"
-                                ? Image.asset('assets/profile.jpg',
-                                    fit: BoxFit.cover)
-                                : Image.network(
-                                    snapshot.child('imagepic').value.toString(),
-                                    fit: BoxFit.cover)),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                snapshot.child('name').value.toString(),
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                    color: HexColor('#212121')),
-                              ),
-                              SizedBox(
-                                height: 4,
-                              ),
-                              Text(
-                                snapshot.child('id').value.toString(),
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w300,
-                                    fontSize: 14,
-                                    color: HexColor('#212121')),
-                              )
-                            ]),
-                      ]),
-                ),
-              ));
-        }));
-  }
-}
+//   void gettimeworked() {
+//     timeworkeddispose = database
+//         .child(widget.companyid)
+//         .child("siteworkerhealth")
+//         .child('/${widget.uuid}/timeworked')
+//         .onValue
+//         .listen((DatabaseEvent event) {
+//       timeworkeddata = event.snapshot.value;
+//       setState(() {
+//         timeworked = "$timeworkeddata";
+//       });
+//       print(timeworked);
+//     });
+//   }
 
+//   void getdayworked() {
+//     dayworkeddispose = database
+//         .child(widget.companyid)
+//         .child("siteworkerhealth")
+//         .child('/${widget.uuid}/duty')
+//         .onValue
+//         .listen((DatabaseEvent event) {
+//       dayworkeddata = event.snapshot.value;
+//       setState(() {
+//         dayworked = "$dayworkeddata";
+//       });
+//       print(dayworked);
+//     });
+//   }
 
-  //  snapshot
-  //                               .child("name")
-  //                               .value
-  //                               .toString()
+//   @override
+//   initState() {
+//     getheartrate();
+//     getstepcount();
+//     gettimeworked();
+//     getdayworked();
+//     super.initState;
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     double screenwidth = MediaQuery.of(context).size.width;
+//     double screenheight = MediaQuery.of(context).size.height;
+//     return Scaffold(
+//         body: SafeArea(
+//             child: Container(
+//                 width: screenwidth,
+//                 height: screenheight,
+//                 color: HexColor("#FFFFFF"),
+//                 child: Column(
+//                   children: [
+//                     Back_btn_navbar(navname: "Health information"),
+//                     Container(
+//                         height: 160,
+//                         child: Row(
+//                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                           crossAxisAlignment: CrossAxisAlignment.center,
+//                           children: [
+//                             Container(
+//                               width: screenwidth * 0.24,
+//                               height: 126,
+//                               decoration: BoxDecoration(
+//                                 // border: Border.all(
+//                                 //     color: HexColor("#000000"), width: 1),
+//                                 borderRadius: BorderRadius.circular(20),
+//                                 color: HexColor('#DAFFD1'),
+//                               ),
+//                               child: ClipRRect(
+//                                 borderRadius: BorderRadius.circular(20),
+//                                 child: widget.profilepic == "null"
+//                                     ? Image.asset('assets/profile.jpg',
+//                                         fit: BoxFit.cover)
+//                                     : Image.network(widget.profilepic,
+//                                         fit: BoxFit.cover),
+//                               ),
+//                             ),
+//                             Container(
+//                               width: screenwidth * 0.56,
+//                               height: 126,
+//                               decoration: BoxDecoration(
+//                                 // border: Border.all(
+//                                 //     color: HexColor("#000000"), width: 1),
+//                                 borderRadius: BorderRadius.circular(20),
+//                                 color: HexColor('#D1E0FF'),
+//                               ),
+//                               child: Row(
+//                                   mainAxisAlignment:
+//                                       MainAxisAlignment.spaceEvenly,
+//                                   crossAxisAlignment: CrossAxisAlignment.center,
+//                                   children: [
+//                                     Container(
+//                                       width: 45,
+//                                       height: 45,
+//                                       decoration: BoxDecoration(
+//                                         borderRadius: BorderRadius.circular(50),
+//                                         color: HexColor('#8FB4FF'),
+//                                       ),
+//                                       child: Icon(
+//                                         (dayworked.toString() == "false"
+//                                             ? Icons.hourglass_full
+//                                             : Icons.hourglass_bottom),
+//                                       ),
+//                                     ),
+//                                     Column(
+//                                       mainAxisAlignment:
+//                                           MainAxisAlignment.center,
+//                                       crossAxisAlignment:
+//                                           CrossAxisAlignment.start,
+//                                       children: [
+//                                         Text(
+//                                           (timeworked.toString() == ""
+//                                               ? "00:00:00"
+//                                               : timeworked.toString()),
+//                                           style: GoogleFonts.poppins(
+//                                               fontWeight: FontWeight.w700,
+//                                               fontSize: screenwidth * 0.04,
+//                                               color: HexColor('#212121')),
+//                                         ),
+//                                         SizedBox(
+//                                           height: 5,
+//                                         ),
+//                                         Text(
+//                                           "Working ${(dayworked.toString() == "false" ? "full day" : "half day")}",
+//                                           style: GoogleFonts.notoSans(
+//                                               fontWeight: FontWeight.w300,
+//                                               fontSize: screenwidth * 0.032,
+//                                               color: HexColor('#212121')),
+//                                         )
+//                                       ],
+//                                     ),
+//                                   ]),
+//                             ),
+//                           ],
+//                         )),
+//                     Container(
+//                       height: screenwidth * 0.04,
+//                       width: screenwidth,
+//                     ),
+//                     Container(
+//                       height: 50.0,
+//                       width: screenwidth,
+//                       // width: 450,
+//                       // color: HexColor('#87EAC0'),
+//                       child: Padding(
+//                         padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+//                         child: Row(
+//                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                             crossAxisAlignment: CrossAxisAlignment.center,
+//                             children: [
+//                               Text(
+//                                 "Health info",
+//                                 style: TextStyle(
+//                                     fontWeight: FontWeight.bold,
+//                                     fontSize: 20,
+//                                     color: HexColor('#212121')),
+//                               ),
+//                               Container(
+//                                 width: screenwidth * 0.18,
+//                                 height: 30.0,
+//                                 // color: Colors.black,
+//                               ),
+//                               Row(
+//                                 children: [
+//                                   Text(
+//                                     "See more",
+//                                     style: TextStyle(
+//                                         fontWeight: FontWeight.w200,
+//                                         fontSize: 16,
+//                                         color: HexColor('#000000')),
+//                                   ),
+//                                   IconButton(
+//                                     onPressed: (() {
+//                                       Navigator.push(context,
+//                                           MaterialPageRoute(builder: (context) {
+//                                         return Worker_info(
+//                                           uuid: widget.uuid,
+//                                         );
+//                                       }));
+//                                     }),
+//                                     icon: Icon(FeatherIcons.arrowRight,
+//                                         size: 18, color: HexColor('#212121')),
+//                                   ),
+//                                 ],
+//                               )
+//                             ]),
+//                       ),
+//                     ),
+//                     Container(
+//                       height: screenwidth * 0.04,
+//                       width: screenwidth,
+//                     ),
+//                     Container(
+//                       height: 80,
+//                       width: screenwidth * 0.86,
+//                       decoration: BoxDecoration(
+//                         // border: Border.all(color: HexColor("#000000"), width: 1),
+//                         borderRadius: BorderRadius.circular(20),
+//                         color: HexColor('#FFFAD1'),
+//                       ),
+//                       child: Row(
+//                           mainAxisAlignment: MainAxisAlignment.start,
+//                           crossAxisAlignment: CrossAxisAlignment.center,
+//                           children: [
+//                             SizedBox(
+//                               width: 15,
+//                             ),
+//                             Container(
+//                               width: 45.0,
+//                               height: 45.0,
+//                               decoration: BoxDecoration(
+//                                   borderRadius: BorderRadius.circular(50),
+//                                   color: HexColor("#FFF28F")),
+//                               child: Row(
+//                                 mainAxisAlignment: MainAxisAlignment.center,
+//                                 children: [
+//                                   Icon(
+//                                     (dayworked.toString() == "false"
+//                                         ? Icons.hourglass_full
+//                                         : Icons.hourglass_bottom),
+//                                   ),
+//                                 ],
+//                               ),
+//                             ),
+//                             SizedBox(
+//                               width: 20,
+//                             ),
+//                             Column(
+//                               mainAxisAlignment: MainAxisAlignment.center,
+//                               crossAxisAlignment: CrossAxisAlignment.start,
+//                               children: [
+//                                 Row(
+//                                   children: [
+//                                     Text(
+//                                       " ${(stepcount == null) ? "0" : stepcount}  ",
+//                                       style: GoogleFonts.poppins(
+//                                           fontWeight: FontWeight.w700,
+//                                           fontSize: screenwidth * 0.04,
+//                                           color: HexColor('#212121')),
+//                                     ),
+//                                     Text(
+//                                       // (stepcount == null) ? "0" : stepcount,
+//                                       "Steps",
+//                                       style: GoogleFonts.notoSans(
+//                                           fontWeight: FontWeight.w500,
+//                                           fontSize: screenwidth * 0.03,
+//                                           color: HexColor('#212121')),
+//                                     ),
+//                                   ],
+//                                 ),
+//                                 SizedBox(
+//                                   height: 5,
+//                                 ),
+//                                 Text(
+//                                   "Measure over all steps",
+//                                   style: GoogleFonts.notoSans(
+//                                       fontWeight: FontWeight.w300,
+//                                       fontSize: screenwidth * 0.032,
+//                                       color: HexColor('#212121')),
+//                                 ),
+//                               ],
+//                             ),
+//                           ]),
+//                     ),
+//                     Container(
+//                       height: screenwidth * 0.06,
+//                       width: screenwidth,
+//                     ),
+//                     Container(
+//                         height: 160,
+//                         child: Row(
+//                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                           crossAxisAlignment: CrossAxisAlignment.center,
+//                           children: [
+//                             Container(
+//                               width: screenwidth * 0.24,
+//                               height: 126,
+//                               decoration: BoxDecoration(
+//                                 // border: Border.all(
+//                                 //     color: HexColor("#000000"), width: 1),
+//                                 borderRadius: BorderRadius.circular(20),
+//                                 color: HexColor('#DAFFD1'),
+//                               ),
+//                               child: Column(
+//                                   mainAxisAlignment: MainAxisAlignment.center,
+//                                   crossAxisAlignment: CrossAxisAlignment.center,
+//                                   children: [
+//                                     Container(
+//                                       width: 45,
+//                                       height: 45,
+//                                       decoration: BoxDecoration(
+//                                         borderRadius: BorderRadius.circular(50),
+//                                         color: HexColor('#A5FF8F'),
+//                                       ),
+//                                       child: Row(
+//                                         mainAxisAlignment:
+//                                             MainAxisAlignment.center,
+//                                         children: [
+//                                           SvgPicture.asset(steps,
+//                                               width: 28,
+//                                               height: 28,
+//                                               fit: BoxFit.contain,
+//                                               semanticsLabel: 'Steps count'),
+//                                         ],
+//                                       ),
+//                                     ),
+//                                     SizedBox(
+//                                       height: 6,
+//                                     ),
+//                                     Row(
+//                                       mainAxisAlignment:
+//                                           MainAxisAlignment.center,
+//                                       children: [
+//                                         Text(
+//                                           // (stepcount == null) ? "0" : stepcount,
+//                                           "100 ",
+//                                           style: GoogleFonts.poppins(
+//                                               fontWeight: FontWeight.w700,
+//                                               fontSize: screenwidth * 0.04,
+//                                               color: HexColor('#212121')),
+//                                         ),
+//                                         Text(
+//                                           // (stepcount == null) ? "0" : stepcount,
+//                                           "km",
+//                                           style: GoogleFonts.notoSans(
+//                                               fontWeight: FontWeight.w500,
+//                                               fontSize: screenwidth * 0.03,
+//                                               color: HexColor('#212121')),
+//                                         ),
+//                                       ],
+//                                     ),
+//                                     SizedBox(
+//                                       height: 4,
+//                                     ),
+//                                     Text(
+//                                       "Distance",
+//                                       style: GoogleFonts.notoSans(
+//                                           fontWeight: FontWeight.w300,
+//                                           fontSize: screenwidth * 0.032,
+//                                           color: HexColor('#212121')),
+//                                     )
+//                                   ]),
+//                             ),
+//                             Container(
+//                               width: screenwidth * 0.24,
+//                               height: 126,
+//                               decoration: BoxDecoration(
+//                                 // border: Border.all(
+//                                 //     color: HexColor("#000000"), width: 1),
+//                                 borderRadius: BorderRadius.circular(20),
+//                                 color: HexColor('#FFD0D7'),
+//                               ),
+//                               child: Column(
+//                                   mainAxisAlignment: MainAxisAlignment.center,
+//                                   crossAxisAlignment: CrossAxisAlignment.center,
+//                                   children: [
+//                                     Container(
+//                                       width: 45,
+//                                       height: 45,
+//                                       decoration: BoxDecoration(
+//                                         borderRadius: BorderRadius.circular(50),
+//                                         color: HexColor('#FF8FA0'),
+//                                       ),
+//                                       child: SvgPicture.asset(heart,
+//                                           width: 28,
+//                                           height: 28,
+//                                           fit: BoxFit.contain,
+//                                           semanticsLabel: 'Heart rate'),
+//                                     ),
+//                                     SizedBox(
+//                                       height: 6,
+//                                     ),
+//                                     Row(
+//                                       mainAxisAlignment:
+//                                           MainAxisAlignment.center,
+//                                       children: [
+//                                         Text(
+//                                           "${(heartrate == null) ? "0" : heartrate} ",
+//                                           // "200 ",
+//                                           style: GoogleFonts.poppins(
+//                                               fontWeight: FontWeight.w700,
+//                                               fontSize: screenwidth * 0.04,
+//                                               color: HexColor('#212121')),
+//                                         ),
+//                                         Text(
+//                                           // (stepcount == null) ? "0" : stepcount,
+//                                           "Bpm",
+//                                           style: GoogleFonts.notoSans(
+//                                               fontWeight: FontWeight.w500,
+//                                               fontSize: screenwidth * 0.03,
+//                                               color: HexColor('#212121')),
+//                                         ),
+//                                       ],
+//                                     ),
+//                                     SizedBox(
+//                                       height: 4,
+//                                     ),
+//                                     Text(
+//                                       "Heart rate ",
+//                                       style: GoogleFonts.notoSans(
+//                                           fontWeight: FontWeight.w300,
+//                                           fontSize: screenwidth * 0.032,
+//                                           color: HexColor('#212121')),
+//                                     )
+//                                   ]),
+//                             ),
+//                             Container(
+//                               width: screenwidth * 0.24,
+//                               height: 126,
+//                               decoration: BoxDecoration(
+//                                 // border: Border.all(
+//                                 //     color: HexColor("#000000"), width: 1),
+//                                 borderRadius: BorderRadius.circular(20),
+//                                 color: HexColor('#D1E0FF'),
+//                               ),
+//                               child: Column(
+//                                   mainAxisAlignment: MainAxisAlignment.center,
+//                                   crossAxisAlignment: CrossAxisAlignment.center,
+//                                   children: [
+//                                     Container(
+//                                       width: 45,
+//                                       height: 45,
+//                                       decoration: BoxDecoration(
+//                                         borderRadius: BorderRadius.circular(50),
+//                                         color: HexColor('#8FB4FF'),
+//                                       ),
+//                                       child: Row(
+//                                         mainAxisAlignment:
+//                                             MainAxisAlignment.center,
+//                                         children: [
+//                                           SvgPicture.asset(calories,
+//                                               width: 28,
+//                                               height: 28,
+//                                               fit: BoxFit.contain,
+//                                               semanticsLabel: 'Calories burn'),
+//                                         ],
+//                                       ),
+//                                     ),
+//                                     SizedBox(
+//                                       height: 6,
+//                                     ),
+//                                     Row(
+//                                       mainAxisAlignment:
+//                                           MainAxisAlignment.center,
+//                                       children: [
+//                                         Text(
+//                                           "290 ",
+//                                           style: GoogleFonts.poppins(
+//                                               fontWeight: FontWeight.w700,
+//                                               fontSize: screenwidth * 0.04,
+//                                               color: HexColor('#212121')),
+//                                         ),
+//                                         Text(
+//                                           // (stepcount == null) ? "0" : stepcount,
+//                                           "km",
+//                                           style: GoogleFonts.notoSans(
+//                                               fontWeight: FontWeight.w500,
+//                                               fontSize: screenwidth * 0.03,
+//                                               color: HexColor('#212121')),
+//                                         ),
+//                                       ],
+//                                     ),
+//                                     SizedBox(
+//                                       height: 4,
+//                                     ),
+//                                     Text(
+//                                       "Calories burn",
+//                                       style: GoogleFonts.notoSans(
+//                                           fontWeight: FontWeight.w300,
+//                                           fontSize: screenwidth * 0.032,
+//                                           color: HexColor('#212121')),
+//                                     )
+//                                   ]),
+//                             ),
+//                           ],
+//                         )),
+//                     Container(
+//                       height: screenwidth * 0.06,
+//                       width: screenwidth,
+//                     ),
+//                     GestureDetector(
+//                       onTap: () {
+//                         Navigator.push(context,
+//                             MaterialPageRoute(builder: (context) {
+//                           return Worker_location_page(
+//                             name: widget.name,
+//                             companyid: widget.companyid,
+//                             uuid: widget.uuid,
+//                           );
+//                         }));
+//                       },
+//                       child: Container(
+//                         height: 150,
+//                         width: screenwidth * 0.86,
+//                         decoration: BoxDecoration(
+//                           borderRadius: BorderRadius.circular(20),
+//                         ),
+//                         child: ClipRRect(
+//                           borderRadius: BorderRadius.circular(20),
+//                           child:
+//                               Image.asset('assets/map.jpg', fit: BoxFit.cover),
+//                         ),
+//                       ),
+//                     )
+//                   ],
+//                 ))));
+//   }
+
+//   @override
+//   deactivate() {
+//     heartratedispose.cancel();
+//     stepcountdispose.cancel();
+//     stepcountdispose.cancel();
+//     dayworkeddispose.cancel();
+//     super.deactivate;
+//   }
+// }
